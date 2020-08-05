@@ -2,9 +2,6 @@
 
 namespace Drupal\kong_connector\Entity;
 
-use Apigee\Edge\Entity\EntityInterface as EdgeEntityInterface;
-use Apigee\Edge\Exception\ApiException;
-use Apigee\Edge\Structure\AttributesProperty;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Url;
@@ -16,8 +13,6 @@ abstract class App extends implements AppInterface {
 
   /**
    * The decorated app entity from the SDK.
-   *
-   * @var \Apigee\Edge\Api\Management\Entity\AppInterface
    */
   protected $decorated;
 

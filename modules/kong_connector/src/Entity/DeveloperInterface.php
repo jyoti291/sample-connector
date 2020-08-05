@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\apigee_edge\Entity;
+namespace Drupal\kong_connector\Entity;
 
 use Apigee\Edge\Api\Management\Entity\DeveloperInterface as EdgeDeveloperInterface;
 use Drupal\user\EntityOwnerInterface;
