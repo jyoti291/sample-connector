@@ -2,12 +2,10 @@
 
 namespace Drupal\kong_connector\Entity;
 
-use Apigee\Edge\Api\Management\Entity\AppInterface as EdgeAppInterface;
-
 /**
  * Defines an interface for App entity objects.
  */
-interface AppInterface extends EdgeAppInterface {
+interface AppInterface {
 
   /**
    * Returns the id of the app owner from the app entity.

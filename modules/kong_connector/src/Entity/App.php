@@ -24,13 +24,10 @@ abstract class App extends implements AppInterface {
    * @param null|string $entity_type
    *   Type of the entity. It is optional because constructor sets its default
    *   value.
-   * @param \Apigee\Edge\Entity\EntityInterface|null $decorated
-   *   The SDK entity that this Drupal entity decorates.
    */
   public function __construct(array $values, string $entity_type, ?EdgeEntityInterface $decorated = NULL) {
     // Credentials should not be cached.
     unset($values['credentials']);
-    /** @var \Apigee\Edge\Api\Management\Entity\App $decorated */
     if ($decorated) {
       $decorated = clone $decorated;
       $decorated->setCredentials();
@@ -103,20 +100,14 @@ abstract class App extends implements AppInterface {
       return [];
     }
     // Get app credentials from the shared app cache if available.
-    /** @var \Drupal\apigee_edge\Entity\Controller\Cache\AppCacheInterface $app_cache */
-    $app_cache = \Drupal::service('apigee_edge.controller.cache.apps');
     $app = $app_cache->getEntity($this->getAppId());
     if ($app === NULL) {
-      // App has not found in cache, we have to load it from Apigee Edge.
-      /** @var \Drupal\apigee_edge\Entity\Controller\AppControllerInterface $app_controller */
-      $app_controller = \Drupal::service('apigee_edge.controller.app');
       try {
         $app = $app_controller->loadApp($this->getAppId());
       }
       catch (ApiException $e) {
         // Just catch it and leave app to be NULL.
         // It should never happen that we have an app id here that does not
-        // belong to an actually existing app in Apigee Edge.
       }
     }
     return $app ? $app->getCredentials() : [];
@@ -127,8 +118,6 @@ abstract class App extends implements AppInterface {
    *
    * They should not be saved on this entity or on the decorated
    * SDK entity object. This is just for extra alertness.
-   *
-   * @see \Drupal\apigee_edge\Entity\FieldableEdgeEntityBase::setPropertyValue()
    */
   public function setCredentials(): void {
   }
@@ -332,7 +321,6 @@ abstract class App extends implements AppInterface {
    */
   protected static function propertyToBaseFieldTypeMap(): array {
     return parent::propertyToBaseFieldBlackList() + [
-      // UUIDs (developerId, appId) managed on Apigee Edge so we do not
       // want to expose them as UUID fields. Same applies for createdAt and
       // lastModifiedAt. We do not want that Drupal apply default values
       // on them if they are empty therefore their field type is a simple
@@ -361,7 +349,6 @@ abstract class App extends implements AppInterface {
     $value = parent::get($field_name);
 
     // Make sure that returned callback url field values are actually valid
-    // URLs. Apigee Edge allows to set anything as callbackUrl value but
     // Drupal can only accept valid URIs.
     if ($field_name === 'callbackUrl') {
       if (!$value->isEmpty()) {
@@ -393,7 +380,6 @@ abstract class App extends implements AppInterface {
         Url::fromUri($value);
       }
       catch (\Exception $exception) {
-        /** @var \Drupal\apigee_edge\Entity\App $app */
         $app = parent::set($field_name, '', $notify);
         $app->setCallbackUrl($value);
         return $app;
